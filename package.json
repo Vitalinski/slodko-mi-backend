@@ -1,0 +1,49 @@
+{
+  "name": "myproject",
+  "version": "1.0.0",
+  "description": "This project was bootstrapped with Fastify-CLI.",
+  "main": "app.ts",
+  "type": "module",
+  "directories": {
+    "test": "test"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
+  "scripts": {
+    "test": "npm run build:ts && tsc -p test/tsconfig.json && c8 node --test -r ts-node/register \"test/**/*.ts\"",
+    "start": "npm run build:ts && fastify start -l info dist/app.js",
+    "build:ts": "tsc",
+    "watch:ts": "tsc -w ",
+    "dev": "tsx --watch src/app.ts",
+    "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/autoload": "^6.0.0",
+    "@fastify/cors": "^11.2.0",
+    "@fastify/sensible": "^6.0.0",
+    "@prisma/adapter-pg": "^7.3.0",
+    "@prisma/client": "^6.19.2",
+    "dotenv": "^17.2.3",
+    "fastify": "^5.0.0",
+    "fastify-cli": "^7.4.1",
+    "fastify-plugin": "^5.0.0",
+    "nanoid": "^5.1.6",
+    "pg": "^8.17.2",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.9",
+    "@types/pg": "^8.16.0",
+    "c8": "^10.1.2",
+    "concurrently": "^9.0.0",
+    "fastify-tsconfig": "^3.0.0",
+    "prisma": "^6.19.2",
+    "ts-node": "^10.4.0",
+    "tsx": "^4.21.0",
+    "typescript": "~5.9.2"
+  }
+}

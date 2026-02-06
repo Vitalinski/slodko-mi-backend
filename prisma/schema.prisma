@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  title       String
+  image       String
+  unit        String
+  price       Int
+  description String
+  minQuantity Int
+  isPopular   Boolean
+  createdAt   DateTime  @default(now())
+  categoryId  String
+  category    Category? @relation(fields: [categoryId], references: [id])
+}
+
+model Category {
+  id           String    @id @default(cuid())
+  slug         String    @unique
+  title        String
+  showInHeader Boolean   @default(false)
+  order        Int       @default(0)
+  products     Product[]
+}
+
+model PromoCode {
+  id       String  @id @default(uuid())
+  code     String  @unique
+  email    String  @unique
+  used     Boolean @default(false)
+  discount Int     @default(10)
+}
+
+model Subscriber {
+  id       String  @id @default(uuid())
+  email    String  @unique
+  isActive Boolean @default(true)
+}
+
+model Order {
+  id             String      @id @default(cuid())
+  name           String
+  email          String
+  phone          String
+  deliveryType   String
+  promoCode      String?
+  totalPrice     Int
+  discount       Int
+  discountAmount Int
+  dateOfOrder    DateTime
+  postalCode     String?
+  street         String?
+  houseNumber    String?
+  createdAt      DateTime    @default(now())
+  items          OrderItem[]
+  payed          Boolean     @default(false)
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  isPopular   Boolean
+  minQuantity Int
+  price       Int
+  quantity    Int
+  title       String
+  unit        String
+  order       Order   @relation(fields: [orderId], references: [id])
+}
+
+
