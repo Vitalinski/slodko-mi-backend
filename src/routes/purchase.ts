@@ -1,10 +1,10 @@
-import { FastifyInstance } from "fastify";
+import { FastifyPluginAsync } from "fastify";
 import { validatePromoCode } from "../services/promoCodes.js";
 import { emailSchema } from "../schemas/email/schema.js";
 import { prisma } from "../lib/prisma.js";
 import { PurchaseRequestBody } from "../types/index.js";
 
-export function purchaseRoutes(fastify: FastifyInstance) {
+const purchaseRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.post("/purchase", async (request, reply) => {
     const order = (request.body as PurchaseRequestBody).order;
 
@@ -104,4 +104,5 @@ export function purchaseRoutes(fastify: FastifyInstance) {
 
     return currentOrder;
   });
-}
+};
+export default purchaseRoutes;

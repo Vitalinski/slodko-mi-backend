@@ -1,7 +1,7 @@
-import { FastifyInstance } from "fastify";
+import { FastifyPluginAsync } from "fastify";
 import { validatePromoCode } from "../services/promoCodes.js";
 
-export function promoCodesRoutes(fastify: FastifyInstance) {
+const promoCodesRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.get("/promo/validate", async (request, reply) => {
     const { code } = request.query as { code: string };
 
@@ -15,4 +15,6 @@ export function promoCodesRoutes(fastify: FastifyInstance) {
 
     return { ok: true, discount: result.discount };
   });
-}
+};
+
+export default promoCodesRoutes;

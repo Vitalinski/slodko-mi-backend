@@ -1,7 +1,9 @@
-import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma.js";
 
-export  function categoriesRoutes(fastify: FastifyInstance) {
+import { FastifyPluginAsync } from "fastify";
+const categoriesRoutes: FastifyPluginAsync = async (fastify) => {
+
+
   fastify.get("/categories/header", async () => {
     const headerCategories = await prisma.category.findMany({
       where: {
@@ -23,3 +25,5 @@ export  function categoriesRoutes(fastify: FastifyInstance) {
     return allCategories;
   });
 }
+
+export default categoriesRoutes;

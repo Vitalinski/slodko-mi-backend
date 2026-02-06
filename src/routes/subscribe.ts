@@ -1,10 +1,10 @@
-import { FastifyInstance } from "fastify";
+import { FastifyPluginAsync } from "fastify";
 import { Prisma } from "@prisma/client";
 import { emailSchema } from "../schemas/email/schema.js";
 import { subscribeWithPromo } from "../services/subscribeFlow.js";
 import { createBrevoContact } from "../services/brevo.js";
 
-export  function subscribeRoutes(fastify: FastifyInstance) {
+const subscribeRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.post("/subscribe", async (request, reply) => {
     const parsed = emailSchema.safeParse(request.body);
 
@@ -47,3 +47,4 @@ export  function subscribeRoutes(fastify: FastifyInstance) {
     });
   });
 }
+export default subscribeRoutes;

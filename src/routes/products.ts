@@ -1,10 +1,10 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import {  FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
 import { prisma } from "../lib/prisma.js";
 import { Prisma } from "@prisma/client";
 import { CreateProductBody, ProductsQuery } from "../types/index.js";
 import { productsQuerySchema } from "../types/schema.js";
 
-export  function productsRoutes(fastify: FastifyInstance) {
+const productsRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.get(
     "/products",
     {
@@ -87,3 +87,6 @@ export  function productsRoutes(fastify: FastifyInstance) {
     },
   );
 }
+
+
+export default productsRoutes;
