@@ -1,4 +1,3 @@
-// services/promoCodes.ts
 import { prisma } from "../lib/prisma.js";
 import { nanoid } from "nanoid";
 

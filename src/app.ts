@@ -7,6 +7,7 @@ import categoriesRoutes from "./routes/categories.js";
 import subscribeRoutes from "./routes/subscribe.js";
 import promoCodesRoutes from "./routes/promoCodes.js";
 import purchaseRoutes from "./routes/purchase.js";
+import fastifyMultipart from "@fastify/multipart";
 
 dotenv.config();
 
@@ -24,8 +25,13 @@ const fastify = Fastify({
 await fastify.register(cors, {
   origin: process.env.FRONTEND_ORIGIN?.split(","),
   credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 });
 
+fastify.register(fastifyMultipart, {
+  attachFieldsToBody: true,
+  limits: { fileSize: 10 * 1024 * 1024 },
+});
 fastify.get("/", async () => {
   return { message: "Port is working good!" };
 });
