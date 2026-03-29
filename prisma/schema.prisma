@@ -43,15 +43,19 @@ model Category {
 model PromoCode {
   id       String  @id @default(uuid())
   code     String  @unique
+  token    String  @unique
   email    String  @unique
   used     Boolean @default(false)
   discount Int     @default(10)
+ 
 }
 
 model Subscriber {
   id       String  @id @default(uuid())
   email    String  @unique
-  isActive Boolean @default(true)
+  consentText String 
+  consentDate     DateTime @default(now())
+  consentIp     String
 }
 
 model Order {

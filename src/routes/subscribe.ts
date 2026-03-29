@@ -16,10 +16,19 @@ const subscribeRoutes: FastifyPluginAsync = async (fastify) => {
 
     const { email } = parsed.data;
 
+    const ipAddress =
+      request.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() ||
+      request.headers["x-real-ip"]?.toString() ||
+      request.ip ||
+      null;
+
     let promoCode: string;
+    let token: string;
 
     try {
-      promoCode = await subscribeWithPromo(email);
+      const codes = await subscribeWithPromo(email, ipAddress);
+      promoCode = codes.code;
+      token = codes.token;
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === "P2002") {
@@ -36,15 +45,17 @@ const subscribeRoutes: FastifyPluginAsync = async (fastify) => {
     }
 
     try {
-      await createBrevoContact(email, promoCode);
+      await createBrevoContact(email, promoCode, token);
     } catch (err) {
       request.log.error(err, "Brevo failed");
+      return reply.status(500).send({
+        error: { code: "INTERNAL_ERROR" },
+      });
     }
 
     return reply.status(200).send({
       ok: true,
-      promoCode,
     });
   });
-}
+};
 export default subscribeRoutes;

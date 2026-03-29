@@ -1,21 +1,26 @@
 import { prisma } from "../lib/prisma.js";
 import { nanoid } from "nanoid";
+const PROMO_CODE_LENGTH = 8
+const TOKEN_LENGTH = 10
 
-export function generatePromoCode() {
-  return nanoid(8).toUpperCase();
-}
 
 export async function addPromoCode(email: string) {
-  const code = generatePromoCode();
+  const code = generateCode(PROMO_CODE_LENGTH);
+  const token = generateCode(TOKEN_LENGTH);
 
   await prisma.promoCode.create({
     data: {
       email,
       code,
+      token,
     },
   });
 
-  return code;
+  return { code, token };
+}
+
+export function generateCode(length: number) {
+  return nanoid(length).toUpperCase();
 }
 
 export async function validatePromoCode(code: string) {
@@ -43,5 +48,33 @@ export async function validatePromoCode(code: string) {
   return {
     valid: true as const,
     discount: promo.discount,
+  };
+}
+
+export async function validateToken(token: string) {
+  if (!token || token.length !== 10) {
+    return { valid: false as const, errorCode: "INVALID_TOKEN" };
+  }
+
+  const promo = await prisma.promoCode.findUnique({
+    where: { token },
+  });
+  if (!promo) {
+    return {
+      valid: false as const,
+      errorCode: "PROMO_CODE_NOT_FOUND",
+    };
+  }
+
+  if (promo.used) {
+    return {
+      valid: false as const,
+      errorCode: "PROMO_CODE_ALREADY_USED",
+    };
+  }
+
+  return {
+    valid: true as const,
+    promoCode: promo.code,
   };
 }
