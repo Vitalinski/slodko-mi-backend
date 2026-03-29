@@ -75,7 +75,15 @@ const productsRoutes: FastifyPluginAsync = async (fastify) => {
           orderBy: { createdAt: "desc" },
         }),
       ]);
-      return { products, totalCount };
+
+      const formattedProducts = products.map((product) => ({
+        ...product,
+        images: product.images.map((img) => {
+          return { url: img.url, order: img.order, id: img.id };
+        }),
+      }));
+
+      return { products: formattedProducts, totalCount };
     },
   );
 
@@ -85,8 +93,17 @@ const productsRoutes: FastifyPluginAsync = async (fastify) => {
         where: {
           isPopular: true,
         },
+        include: { images: true },
       });
-      return popularProducts;
+
+      const formattedProducts = popularProducts.map((product) => ({
+        ...product,
+        images: product.images.map((img) => {
+          return { url: img.url, order: img.order, id: img.id };
+        }),
+      }));
+
+      return formattedProducts;
     } catch (error) {
       reply.status(500);
       return { message: "Failed to get popular products" };
