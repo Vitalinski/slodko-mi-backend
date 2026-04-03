@@ -1,11 +1,12 @@
-import { FastifyPluginAsync } from "fastify";
+import { FastifyPluginAsync, FastifyRequest } from "fastify";
 import { Prisma } from "@prisma/client";
 import { emailSchema } from "../schemas/email/schema.js";
 import { subscribeWithPromo } from "../services/subscribeFlow.js";
 import { createBrevoContact } from "../services/brevo.js";
+import { getIpAddress } from "../utils/getIpAddress.js";
 
 const subscribeRoutes: FastifyPluginAsync = async (fastify) => {
-  fastify.post("/subscribe", async (request, reply) => {
+  fastify.post("/subscribe", async (request: FastifyRequest, reply) => {
     const parsed = emailSchema.safeParse(request.body);
 
     if (!parsed.success) {
@@ -16,11 +17,7 @@ const subscribeRoutes: FastifyPluginAsync = async (fastify) => {
 
     const { email } = parsed.data;
 
-    const ipAddress =
-      request.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() ||
-      request.headers["x-real-ip"]?.toString() ||
-      request.ip ||
-      null;
+    const ipAddress = getIpAddress(request);
 
     let promoCode: string;
     let token: string;
