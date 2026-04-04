@@ -2,9 +2,32 @@ import { FastifyPluginAsync } from "fastify";
 import { validatePromoCode } from "../services/promoCodes.js";
 import { emailSchema } from "../schemas/email/schema.js";
 import { prisma } from "../lib/prisma.js";
-import { PurchaseRequestBody } from "../types/index.js";
+import { OrderStatusRequestBody, PurchaseRequestBody } from "../types/index.js";
+import { createPayUPaymentURL } from "../services/payu.js";
+import { OrderStatus } from "@prisma/client";
+import { getIpAddress } from "../utils/getIpAddress.js";
 
 const purchaseRoutes: FastifyPluginAsync = async (fastify) => {
+  fastify.post("/purchase/status", async (request, reply) => {
+    const orderId = (request.body as OrderStatusRequestBody).orderId;
+
+    if (!orderId) {
+      return reply.status(402).send({
+        error: { code: "INVALID_ORDER" },
+      });
+    }
+
+    const currentOrder = await prisma.order.findUnique({
+      where: {
+        id: orderId,
+      },
+    });
+
+    return reply.send({
+      orderStatus: currentOrder?.status,
+    });
+  });
+
   fastify.post("/purchase", async (request, reply) => {
     const order = (request.body as PurchaseRequestBody).order;
 
@@ -87,22 +110,22 @@ const purchaseRoutes: FastifyPluginAsync = async (fastify) => {
             data: productsData,
           },
         },
-        payed: false,
+        status: OrderStatus.PENDING,
       },
     });
 
-    const currentOrder = await prisma.order.findUnique({
-      where: {
-        id: createdOrder.id,
-      },
+    const customerIp = getIpAddress(request);
+
+    const paymentURL = await createPayUPaymentURL({
+      amount: finalPrice,
+      email: order.email,
+      orderId: createdOrder.id.toString(),
+      customerIp,
     });
 
-    //ОТРИМАЛИ ОПЛАТУ -
-    // 1- ПОКАЗУЄМО ВІКНО УСПІШНОЇ ОПЛАТИ
-    // 2- ПЕРЕВОДИМО КОД ПРОМОКОДУ В СТАТУС ВИКОРИСТАНОГО
-    // 3- ВІДПРАВЛЯЄМО ПОВІДОМЛЕННЯ НА ПОШТУ ПРО ПРОДАЖ ТОВАРУ ІНФОРМАЦІЮ ПРО ЗАМОВЛЕННЯ
-
-    return currentOrder;
+    return reply.send({
+      redirectUrl: paymentURL,
+    });
   });
 };
 export default purchaseRoutes;

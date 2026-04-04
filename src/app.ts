@@ -8,6 +8,7 @@ import subscribeRoutes from "./routes/subscribe.js";
 import promoCodesRoutes from "./routes/promoCodes.js";
 import purchaseRoutes from "./routes/purchase.js";
 import fastifyMultipart from "@fastify/multipart";
+import webhookRoutes from "./routes/webhookPayU.js";
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ fastify.register(categoriesRoutes);
 fastify.register(subscribeRoutes);
 fastify.register(promoCodesRoutes);
 fastify.register(purchaseRoutes);
+fastify.register(webhookRoutes);
 
 const port = Number(process.env.PORT) || 3000;
 

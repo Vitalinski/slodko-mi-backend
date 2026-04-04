@@ -62,3 +62,7 @@ export type PurchaseRequestBody = {
     totalPrice: number;
   };
 };
+
+export type OrderStatusRequestBody = {
+  orderId:string
+};
