@@ -47,6 +47,23 @@ const webhookRoutes: FastifyPluginAsync = async (fastify) => {
     const originalOrderId = extOrderId.split("_")[0];
     const newStatus = mapPayUStatusToOrderStatus(payuStatus);
 
+    const currentOrder = await prisma.order.findUnique({
+      where: { id: originalOrderId },
+    });
+
+    if (currentOrder?.promoCode && newStatus === "COMPLETED") {
+      try {
+        await prisma.promoCode.update({
+          where: { code: currentOrder.promoCode },
+          data: { used: true },
+        });
+      } catch (error: any) {
+        console.error("Promo code update error:", error);
+        if (error.code === "P2025")
+          return reply.status(404).send("Promo code not found");
+      }
+    }
+
     try {
       await prisma.order.update({
         where: { id: originalOrderId },
