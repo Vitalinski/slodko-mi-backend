@@ -73,8 +73,8 @@ model Order {
   houseNumber    String?
   createdAt      DateTime    @default(now())
   items          OrderItem[]
-  payed          Boolean     @default(false)
-  status         OrderStatus
+  paymentStatus  PaymentStatus @default(PENDING)
+  orderStatus    OrderStatus @default(NEW)
 }
 
 model OrderItem {
@@ -90,7 +90,14 @@ model OrderItem {
 }
 
 
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  CANCELED
+}
+
 enum OrderStatus {
+  NEW
   PENDING
   COMPLETED
   CANCELED

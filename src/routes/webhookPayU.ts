@@ -67,7 +67,7 @@ const webhookRoutes: FastifyPluginAsync = async (fastify) => {
     try {
       await prisma.order.update({
         where: { id: originalOrderId },
-        data: { status: newStatus },
+        data: { paymentStatus: newStatus },
       });
       console.log(
         `Order ${originalOrderId} updated to ${newStatus}, payU status is ${payuStatus}`,

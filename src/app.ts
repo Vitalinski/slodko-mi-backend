@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 
 import productsRoutes from "./routes/products.js";
 import categoriesRoutes from "./routes/categories.js";
+import ordersRoutes from "./routes/orders.js";
 import subscribeRoutes from "./routes/subscribe.js";
 import promoCodesRoutes from "./routes/promoCodes.js";
 import purchaseRoutes from "./routes/purchase.js";
@@ -43,6 +44,7 @@ fastify.register(subscribeRoutes);
 fastify.register(promoCodesRoutes);
 fastify.register(purchaseRoutes);
 fastify.register(webhookRoutes);
+fastify.register(ordersRoutes);
 
 const port = Number(process.env.PORT) || 3000;
 
