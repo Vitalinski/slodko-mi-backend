@@ -1,4 +1,5 @@
 import { MultipartFile } from "@fastify/multipart";
+import { OrderStatus } from "@prisma/client";
 
 type FormDataField<T = string> = {
   value: T;
@@ -10,6 +11,16 @@ export type ProductsQuery = {
   limit?: number;
   searchValue?: string;
   onlyPopular?: boolean;
+};
+export type OrdersQuery = {
+  orderStatuses?: OrderStatus[];
+  page?: number;
+  limit?: number;
+  searchValue?: string;
+};
+
+export type UpdateOrderStatusData = {
+  newStatus: OrderStatus;
 };
 
 export type UpdateProductFormData = CreateProductFormData & {
@@ -64,5 +75,5 @@ export type PurchaseRequestBody = {
 };
 
 export type OrderStatusRequestBody = {
-  orderId:string
+  orderId: string;
 };

@@ -24,7 +24,7 @@ const purchaseRoutes: FastifyPluginAsync = async (fastify) => {
     });
 
     return reply.send({
-      orderStatus: currentOrder?.status,
+      orderStatus: currentOrder?.paymentStatus,
     });
   });
 
@@ -110,7 +110,6 @@ const purchaseRoutes: FastifyPluginAsync = async (fastify) => {
             data: productsData,
           },
         },
-        status: OrderStatus.PENDING,
       },
     });
 
