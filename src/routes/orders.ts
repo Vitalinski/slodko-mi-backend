@@ -56,6 +56,7 @@ const ordersRoutes: FastifyPluginAsync = async (fastify) => {
           where,
           skip,
           take: limit,
+          include: { items: true },
           orderBy: { createdAt: "desc" },
         }),
       ]);
@@ -97,7 +98,7 @@ const ordersRoutes: FastifyPluginAsync = async (fastify) => {
         });
 
         return updatedOrder;
-      } catch (e:any) {
+      } catch (e: any) {
         if (e.code === "P2025") {
           return reply.status(404).send({ message: "Order not found" });
         }
